@@ -1,5 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pengingat Sahur & Buka 🤍</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#121212">
+
+  <!-- ICON -->
+  <link rel="icon" type="image/jpeg" href="icon.jpeg">
+  <link rel="apple-touch-icon" href="icon.jpeg">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    h1 {
+      color: #ff7aa2;
+      font-size: 30px;
+    }
+
+    #jam {
+      font-size: 42px;
+      margin: 20px 0;
+    }
+
+    #pesan {
+      font-size: 22px;
+      margin-top: 25px;
+      font-weight: bold;
+    }
+
+    button {
+      margin-top: 35px;
+      padding: 15px 30px;
+      font-size: 20px;
+      background-color: #ff7aa2;
+      color: black;
+      border: none;
+      border-radius: 14px;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    #note {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #bbbbbb;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Hai Afandi 🤍</h1>
+
+  <div id="jam">00:00</div>
+  <div id="pesan"></div>
+
+  <button onclick="udahMakan()">UDAH MAKAN 🍽️</button>
+  <div id="note"></div>
+
+  <!-- AUDIO SAHUR & BUKA -->
+  <audio id="audioSahur" src="sahur.mp3.mpeg"></audio>
+  <audio id="audioBuka" src="buka.mp3.mpeg"></audio>
+
 <script>
-  let alarmAktif = false;
+  let audioAktif = false;
 
   function getSesi(jam) {
     if (jam >= 3 && jam < 5) return "sahur";
@@ -19,7 +94,7 @@
     if (sesi !== sesiTersimpan) {
       localStorage.removeItem("udahMakan");
       localStorage.setItem("sesi", sesi);
-      alarmAktif = false;
+      audioAktif = false;
     }
 
     let pesan = "Semangat puasanya yaa 🤍";
@@ -34,11 +109,10 @@
       note = "bismillah dulu sebelum makan yaa 🤍";
     }
 
-    // 🔊 AUDIO SAHUR / BUKA (tanpa alarm utama)
     if (
       localStorage.getItem("udahMakan") !== "ya" &&
       sesi !== "none" &&
-      !alarmAktif
+      !audioAktif
     ) {
       navigator.vibrate([300, 200, 300]);
 
@@ -49,11 +123,11 @@
         document.getElementById("audioBuka").play();
       }
 
-      alarmAktif = true;
+      audioAktif = true;
     }
 
     if (localStorage.getItem("udahMakan") === "ya") {
-      pesan = "😤🤍 PINTAR. MAKASIH UDAH MAKAN.";
+      pesan = "🤍 Makasih udah makan.";
     }
 
     document.getElementById("pesan").innerText = pesan;
@@ -77,10 +151,12 @@
     const linkWA = `https://wa.me/${nomorCacii}?text=${encodeURIComponent(pesanWA)}`;
 
     window.open(linkWA, "_blank");
-
     updateJam();
   }
 
   setInterval(updateJam, 1000);
   updateJam();
 </script>
+
+</body>
+</html>
