@@ -153,6 +153,14 @@
     window.open(linkWA, "_blank");
     updateJam();
   }
+// WAJIB: aktifkan audio setelah klik pertama
+document.addEventListener("click", function () {
+  const sahur = document.getElementById("audioSahur");
+  const buka = document.getElementById("audioBuka");
+
+  sahur.play().then(() => sahur.pause()).catch(() => {});
+  buka.play().then(() => buka.pause()).catch(() => {});
+}, { once: true });
 
   setInterval(updateJam, 1000);
   updateJam();
@@ -160,4 +168,5 @@
 
 </body>
 </html>
+
 
