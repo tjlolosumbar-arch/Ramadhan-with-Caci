@@ -74,87 +74,19 @@
   <audio id="audioBuka" src="buka.mp3"></audio>
 
 <script>
-  let audioAktif = false;
+ let audioAktif = false;
+let didInteract = false;
 
-  function getSesi(jam) {
-    if (jam >= 3 && jam < 5) return "sahur";
-    if (jam >= 17 && jam < 19) return "buka";
-    return "none";
-  }
+function getSesi(jam) {
+  if (jam >= 3 && jam < 5) return "sahur";
+  if (jam >= 17 && jam < 19) return "buka";
+  return "none";
+}
 
-  function updateJam() {
-    const sekarang = new Date();
-    const jam = sekarang.getHours();
-    const menit = sekarang.getMinutes().toString().padStart(2, '0');
-    document.getElementById("jam").innerText = jam + ":" + menit;
-
-    const sesi = getSesi(jam);
-    const sesiTersimpan = localStorage.getItem("sesi");
-
-    if (sesi !== sesiTersimpan) {
-      localStorage.removeItem("udahMakan");
-      localStorage.setItem("sesi", sesi);
-      audioAktif = false;
-    }
-
-    let pesan = "Semangat puasanya yaa 🤍";
-    let note = "salam hangatt dari cacii 🤍";
-
-    if (sesi === "sahur") {
-      pesan = "🌙 AYOO SAHUR AFANDII, GABOLEH MALAS 😤";
-      note = "awas ga sahur nanti lemes 🤍";
-    } 
-    else if (sesi === "buka") {
-      pesan = "🌅 WAKTUNYA BUKA PUASA AFANDII 🤍";
-      note = "bismillah dulu sebelum makan yaa 🤍";
-    }
-
-    if (
-      localStorage.getItem("udahMakan") !== "ya" &&
-      sesi !== "none" &&
-      !audioAktif
-    ) {
-      navigator.vibrate([300, 200, 300]);
-
-      if (sesi === "sahur") {
-        document.getElementById("audioSahur").play();
-      } 
-      else if (sesi === "buka") {
-        document.getElementById("audioBuka").play();
-      }
-
-      audioAktif = true;
-    }
-
-    if (localStorage.getItem("udahMakan") === "ya") {
-      pesan = "🤍 Makasih udah makan.";
-    }
-
-    document.getElementById("pesan").innerText = pesan;
-    document.getElementById("note").innerText = note;
-  }
-
-  function udahMakan() {
-    localStorage.setItem("udahMakan", "ya");
-
-    const sesi = localStorage.getItem("sesi");
-    let pesanWA = "Aku udah makan yaa 🤍";
-
-    if (sesi === "sahur") {
-      pesanWA = "Aku udah sahur yaa 🤍";
-    } 
-    else if (sesi === "buka") {
-      pesanWA = "Aku udah buka puasa yaa 🤍";
-    }
-
-    const nomorCacii = "6285271960542";
-    const linkWA = `https://wa.me/${nomorCacii}?text=${encodeURIComponent(pesanWA)}`;
-
-    window.open(linkWA, "_blank");
-    updateJam();
-  }
-// WAJIB: aktifkan audio setelah klik pertama
+// Aktifkan audio setelah klik pertama
 document.addEventListener("click", function () {
+  didInteract = true;
+
   const sahur = document.getElementById("audioSahur");
   const buka = document.getElementById("audioBuka");
 
@@ -162,11 +94,91 @@ document.addEventListener("click", function () {
   buka.play().then(() => buka.pause()).catch(() => {});
 }, { once: true });
 
-  setInterval(updateJam, 1000);
+function cobaPlay(audioElement) {
+  if (didInteract) {
+    audioElement.play().catch(e => console.log(e));
+  }
+}
+
+function updateJam() {
+  const sekarang = new Date();
+  const jam = sekarang.getHours();
+  const menit = sekarang.getMinutes().toString().padStart(2, '0');
+  document.getElementById("jam").innerText = jam + ":" + menit;
+
+  const sesi = getSesi(jam);
+  const sesiTersimpan = localStorage.getItem("sesi");
+
+  if (sesi !== sesiTersimpan) {
+    localStorage.removeItem("udahMakan");
+    localStorage.setItem("sesi", sesi);
+    audioAktif = false;
+  }
+
+  let pesan = "Semangat puasanya yaa 🤍";
+  let note = "salam hangatt dari cacii 🤍";
+
+  if (sesi === "sahur") {
+    pesan = "🌙 AYOO SAHUR AFANDII, GABOLEH MALAS 😤";
+    note = "awas ga sahur nanti lemes 🤍";
+  } 
+  else if (sesi === "buka") {
+    pesan = "🌅 WAKTUNYA BUKA PUASA AFANDII 🤍";
+    note = "bismillah dulu sebelum makan yaa 🤍";
+  }
+
+  if (
+    localStorage.getItem("udahMakan") !== "ya" &&
+    sesi !== "none" &&
+    !audioAktif
+  ) {
+    navigator.vibrate([300, 200, 300]);
+
+    if (sesi === "sahur") {
+      cobaPlay(document.getElementById("audioSahur"));
+    } 
+    else if (sesi === "buka") {
+      cobaPlay(document.getElementById("audioBuka"));
+    }
+
+    audioAktif = true;
+  }
+
+  if (localStorage.getItem("udahMakan") === "ya") {
+    pesan = "🤍 Makasih udah makan.";
+  }
+
+  document.getElementById("pesan").innerText = pesan;
+  document.getElementById("note").innerText = note;
+}
+
+function udahMakan() {
+  localStorage.setItem("udahMakan", "ya");
+
+  const sesi = localStorage.getItem("sesi");
+  let pesanWA = "Aku udah makan yaa 🤍";
+
+  if (sesi === "sahur") {
+    pesanWA = "Aku udah sahur yaa 🤍";
+  } 
+  else if (sesi === "buka") {
+    pesanWA = "Aku udah buka puasa yaa 🤍";
+  }
+
+  const nomorCacii = "6285271960542";
+  const linkWA = `https://wa.me/${nomorCacii}?text=${encodeURIComponent(pesanWA)}`;
+
+  window.open(linkWA, "_blank");
   updateJam();
+}
+
+setInterval(updateJam, 1000);
+updateJam();
+
 </script>
 
 </body>
 </html>
+
 
 
